@@ -25,7 +25,7 @@ else:
 # Conversion de la colonne temporelle en datetime
 df[time_column] = pd.to_datetime(df[time_column])
 
-# Déterminer la date du jour
+# Déterminer la date du jour (pour le filtrage)
 today = datetime.date.today()
 
 # Filtrer les données du jour
@@ -47,8 +47,9 @@ volatility = high_price - low_price
 evolution = (close_price - open_price) / open_price * 100
 
 # Préparer le rapport quotidien sous forme de dictionnaire
+# Modification ici : inclure l'heure dans la date
 report = {
-    "date": today.strftime("%Y-%m-%d"),
+    "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     "open": open_price,
     "close": close_price,
     "high": high_price,
@@ -70,9 +71,9 @@ if os.path.exists(report_file):
 else:
     df_report = pd.DataFrame()
 
-# Supprimer une éventuelle entrée déjà existante pour aujourd'hui
+# Supprimer une éventuelle entrée déjà existante pour aujourd'hui (selon la date sans l'heure)
 if not df_report.empty and 'date' in df_report.columns:
-    df_report = df_report[df_report['date'] != report["date"]]
+    df_report = df_report[~df_report['date'].str.startswith(today.strftime("%Y-%m-%d"))]
 
 # Ajouter le nouveau rapport en utilisant pd.concat au lieu de append()
 df_report = pd.concat([df_report, pd.DataFrame([report])], ignore_index=True)
@@ -80,4 +81,4 @@ df_report = pd.concat([df_report, pd.DataFrame([report])], ignore_index=True)
 # Sauvegarder le rapport dans daily_report.csv
 df_report.to_csv(report_file, index=False)
 
-print("Daily report généré pour", today)
+print("Daily report généré pour", report["date"])

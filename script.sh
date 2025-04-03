@@ -31,7 +31,7 @@ LOW=$(echo "$INFO" | grep -oP '"name":"FTSE 100","description":"FTSE 100".*?"low
 # Récupération de la date et l'heure actuelles
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
-CSVFILE="./data.csv"
+CSVFILE="/home/ubuntu/ADVPGL_PRJ/data.csv"
 if [ ! -f "$CSVFILE" ]; then
     echo "Timestamp,Price,PercentChange,NetChange,High,Low" > "$CSVFILE"
 fi
